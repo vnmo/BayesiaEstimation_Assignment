@@ -1,0 +1,34 @@
+function [mse_particleFilter] = particleFilter(a, var_w, var_v, observations, num_steps, num_particles)
+
+% Initialize weights
+weights = ones(1,num_particles)/num_particles;
+weights_normalised = weights;
+
+% Simulate the particle filter
+particles = zeros(num_steps,num_particles);
+estimated_state = zeros(num_steps,1);
+
+% Initial particles sampled from a Gaussian distribution
+particles(1,:) = randn(1,num_particles);
+estimated_state(1) = mean(particles(1,:));
+for k = 2:num_steps
+    % Prediction
+    particles(k,:) = a * particles(k-1,:)+sqrt(var_w)*randn(1,num_particles);
+
+    % Update
+    likelihood = normpdf(observations(k), atan(particles(k,:)), sqrt(var_v));
+    weights = weights.*likelihood;
+    weights = weights/sum(weights);
+
+    % Resampling
+    indices = randsample(1:num_particles,num_particles,true,weights);
+    particles(k,:) = particles(k,indices);
+    weights = weights_normalised;
+
+    % Estimate the state (mean of particles)
+    estimated_state(k) = mean(particles(k,:));
+end
+
+mse_particleFilter  =  mean((observations-estimated_state).^2);
+
+end

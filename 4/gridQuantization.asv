@@ -1,0 +1,26 @@
+function [mse_gridQuantization] = gridQuantization(a,var_w,var_v,observations,grid_resolution, num_steps)
+
+observations = observations';
+
+grid = -5:grid_resolution:5; % Create a grid of possible state values
+grid_estimates = zeros(1,num_steps);
+
+for k = 2:num_steps
+    % Realising x
+    grid_states = a*grid + sqrt(var_w)*randn(1,length(grid));
+
+    % Likelihood of y: Update
+    likelihood = normpdf(observations(k),atan(grid_states),sqrt(var_v));
+    posterior = likelihood .* normpdf(grid_states,grid,sqrt(var_w)); % Assuming a uniform prior
+
+    % Normalize the posterior
+    posterior = posterior / sum(posterior);
+
+    % Estimate the state (mean of the posterior)
+    grid_estimates(k) = grid * posterior';
+end
+
+% Calculate Mean Square Errors
+mse_gridQuantization = mean((observations - grid_estimates).^2);
+
+end
