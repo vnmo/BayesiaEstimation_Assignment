@@ -2,6 +2,7 @@ clc
 clear
 
 % https://www.researchgate.net/publication/331917314_Chapter_11_Hidden_Markov_Model_Filtering_and_Smoothing
+
 % Define parameters
 N = 1000; % Number of points
 numStates = 3; % Number of states
@@ -61,13 +62,5 @@ xlabel('Noise Variance');
 ylabel('Mean Squared Error');
 legend('HMM Filter', 'HMM Smoother');
 grid on;
-
-
-% figure;
-% stairs(trueStates(1:25),'--', 'LineWidth', 2)
-% hold;
-% stairs(estimStates_filter(1:25),'-o', 'LineWidth', 2)
-% stairs(estimStates_smoother(1:25),'-*', 'LineWidth', 2)
-% legend('Ground truth', 'HMM Filter', 'HMM smoother');
 
 
